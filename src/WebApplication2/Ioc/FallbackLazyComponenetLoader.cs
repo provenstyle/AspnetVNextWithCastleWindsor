@@ -17,8 +17,6 @@ namespace WebApplication2.Ioc
 
         public IRegistration Load(string name, Type service, IDictionary arguments)
         {
-            System.Console.WriteLine("{0}", service);
-
             var serviceFromFallback = _fallbackProvider.GetService(service);
 
             if (serviceFromFallback != null)

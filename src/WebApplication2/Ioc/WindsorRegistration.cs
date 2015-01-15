@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers;
@@ -9,7 +8,6 @@ using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.DependencyInjection.Windsor;
 using WebApplication2.Controllers;
 
 namespace WebApplication2.Ioc
@@ -26,16 +24,38 @@ namespace WebApplication2.Ioc
         {
             var fallbackComponentLoader = new FallbackLazyComponentLoader(fallbackProvider);
             container.Register(Component.For<ILazyComponentLoader>().Instance(fallbackComponentLoader));
-
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
 
             container.Register(Component.For<IWindsorContainer>().Instance(container));
             container.Register(Component.For<IServiceProvider>().ImplementedBy<WindsorServiceProvider>());
             container.Register(Component.For<IServiceScopeFactory>().ImplementedBy<WindsorServiceScopeFactory>());
             container.Register(Component.For<IControllerFactory>().ImplementedBy<WindsorControllerFactory>());
-            container.Install(new KServiceInstaller(services), FromAssembly.This());
+            container.Install(FromAssembly.This());
+
+            var serviceId = 1;
+            foreach (var serviceDescriptor in services)
+                RegisterService(container, serviceDescriptor, String.Format("MVC_{0}", ++serviceId));
 
             return container.Resolve<IServiceProvider>();
+        }
+
+        private static void RegisterService(IWindsorContainer container, IServiceDescriptor serviceDescriptor, string name)
+        {
+            var service = serviceDescriptor.ServiceType;
+            if (serviceDescriptor.ImplementationInstance != null)
+            {
+                container.Register(Component.For(service)
+                         .Instance(serviceDescriptor.ImplementationInstance)
+                         .Named(name));
+            }
+            else
+            {
+                var implementation = serviceDescriptor.ImplementationType;
+                container.Register(Component.For(service ?? implementation)
+                         .ImplementedBy(implementation)
+                         .ConfigureLifeCycle(serviceDescriptor.Lifecycle)
+                         .Named(name));
+            }
         }
 
         private class WindsorServiceProvider : IServiceProvider

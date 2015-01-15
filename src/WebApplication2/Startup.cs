@@ -34,7 +34,6 @@ namespace WebApplication2
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
         {
-            
         }
 
         // Configure is called after ConfigureServices is called.
@@ -60,7 +59,6 @@ namespace WebApplication2
                 ConfigureWindsor(app, services);
             });
 
-
             // Configure the HTTP request pipeline.
             // Add the console logger.
             loggerfactory.AddConsole();
@@ -79,8 +77,6 @@ namespace WebApplication2
                 app.UseErrorHandler("/Home/Error");
             }
 
-            
-
             // Add static files to the request pipeline.
             app.UseStaticFiles();
 
@@ -98,8 +94,6 @@ namespace WebApplication2
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
-
-           
         }
 
         private static void ConfigureWindsor(IApplicationBuilder app, ServiceCollection services)
@@ -109,9 +103,6 @@ namespace WebApplication2
             container.Register(
                     Component.For<IMessageService>().ImplementedBy<HelloService>()
                 );
-
-            
-
         }
     }
 }
