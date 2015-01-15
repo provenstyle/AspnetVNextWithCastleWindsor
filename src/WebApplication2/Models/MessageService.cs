@@ -1,29 +1,35 @@
 ﻿using System;
+using Castle.Core.Logging;
 
 namespace WebApplication2.Models
 {
     public interface IMessageService
     {
-        string Message { get; set; }
+        string FormatMessage(String message);
     }
 
     public class HelloService : IMessageService
     {
         public HelloService()
         {
-            Message = "Hello";
         }
-        public string Message { get; set; }
 
+        public ILogger Logger { get; set; }
+
+        public string FormatMessage(String message)
+        {
+            return String.Format("Hello {0}", message);
+        }
     }
 
     public class HowdyService : IMessageService
     {
         public HowdyService()
         {
-            Message = "Howdy";
         }
-        public string Message { get; set; }
-
+        public string FormatMessage(String message)
+        {
+            return String.Format("Howdy {0}", message);
+        }
     }
 }

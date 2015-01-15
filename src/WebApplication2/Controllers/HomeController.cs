@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Castle.Core.Logging;
 using Microsoft.AspNet.Mvc;
 using WebApplication2.Models;
 
@@ -13,13 +11,16 @@ namespace WebApplication2.Controllers
         public HomeController(IMessageService messageService)
         {
             _messageService = messageService;
+            Logger = NullLogger.Instance;
         }
+
+        public ILogger Logger { get; set; }
 
         public IActionResult Index()
         {
             return View(new HomeModel
             {
-                Message = _messageService.Message
+                Message = _messageService.FormatMessage("Craig")
             });
         }
 

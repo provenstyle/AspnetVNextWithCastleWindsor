@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.Facilities.Logging;
+using Castle.MicroKernel;
 using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+using Castle.Services.Logging.SerilogIntegration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Microsoft.AspNet.Mvc;
@@ -26,7 +29,7 @@ namespace WebApplication2.Ioc
             container.Register(Component.For<ILazyComponentLoader>().Instance(fallbackComponentLoader));
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
 
-            container.Register(Component.For<IWindsorContainer>().Instance(container));
+            container.AddFacility<LoggingFacility>(f => f.LogUsing<SerilogFactory>());
             container.Register(Component.For<IServiceProvider>().ImplementedBy<WindsorServiceProvider>());
             container.Register(Component.For<IServiceScopeFactory>().ImplementedBy<WindsorServiceScopeFactory>());
             container.Register(Component.For<IControllerFactory>().ImplementedBy<WindsorControllerFactory>());
@@ -71,51 +74,47 @@ namespace WebApplication2.Ioc
 
         private class WindsorServiceProvider : IServiceProvider
         {
-            private IWindsorContainer _container;
+            private IKernel _kernel;
 
-            public WindsorServiceProvider(IWindsorContainer container)
+            public WindsorServiceProvider(IKernel kernel)
             {
-                _container = container;
+                _kernel = kernel;
             }
 
             public object GetService(Type serviceType)
             {
-                return _container.Resolve(serviceType);
+                return _kernel.Resolve(serviceType);
             }
         }
 
         private class WindsorServiceScopeFactory : IServiceScopeFactory
         {
-            private readonly IWindsorContainer _container;
+            private readonly IKernel _kernel;
 
-            public WindsorServiceScopeFactory(IWindsorContainer container)
+            public WindsorServiceScopeFactory(IKernel kernel)
             {
-                _container = container;
+                _kernel = kernel;
             }
 
             public IServiceScope CreateScope()
             {
-                return new WindsorServiceScope(_container);
+                return new WindsorServiceScope(_kernel);
             }
         }
 
         private class WindsorServiceScope : IServiceScope
         {
-            private readonly IWindsorContainer _container;
-            private readonly IServiceProvider _serviceProvider;
+            private readonly IKernel _kernel;
             private readonly IDisposable _scope;
 
-            public WindsorServiceScope(IWindsorContainer container)
+            public WindsorServiceScope(IKernel kernel)
             {
-                _container = container;
-                _scope = _container.BeginScope();
-                _serviceProvider = _container.Resolve<IServiceProvider>();
+                _kernel = kernel;
+                _scope = _kernel.BeginScope();
+                ServiceProvider = _kernel.Resolve<IServiceProvider>();
             }
 
-            public IServiceProvider ServiceProvider
-            {
-                get { return _serviceProvider; }
-            }
+            public IServiceProvider ServiceProvider { get; }
 
             public void Dispose()
             {

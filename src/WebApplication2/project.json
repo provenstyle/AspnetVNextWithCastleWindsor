@@ -19,7 +19,9 @@
         "Microsoft.Framework.Logging": "1.0.0-beta1",
         "Microsoft.Framework.Logging.Console": "1.0.0-beta1",
         "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta1",
-        "Castle.Windsor": "3.3.0.0"
+        "Castle.Windsor": "3.3.0.0",
+"Castle.Core-Serilog": "3.3.3",
+"Castle.LoggingFacility": "3.3.0"
 
 
     },
