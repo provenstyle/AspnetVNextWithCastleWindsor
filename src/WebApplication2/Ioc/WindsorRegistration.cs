@@ -48,6 +48,17 @@ namespace WebApplication2.Ioc
                          .Instance(serviceDescriptor.ImplementationInstance)
                          .Named(name));
             }
+            else if (serviceDescriptor.ImplementationFactory != null)
+            {
+                var factory = serviceDescriptor.ImplementationFactory;
+                container.Register(Component.For(service)
+                    .UsingFactoryMethod(kernel =>
+                    {
+                        var provider = kernel.Resolve<IServiceProvider>();
+                        return factory(provider);
+                    })
+                    .ConfigureLifeCycle(serviceDescriptor.Lifecycle));
+            }
             else
             {
                 var implementation = serviceDescriptor.ImplementationType;
