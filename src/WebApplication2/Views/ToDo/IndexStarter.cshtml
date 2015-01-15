@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET vNext</h1>
+</div>
+@* Markup removed for brevity *@
+<div class="row">
+    <div class="col-md-4">
+        @if (Model.Count == 0)
+        {
+            <h4>No Todo Items</h4>
+        }
+        else
+        {
+            <table>
+                <tr><th>TODO</th><th></th></tr>
+                @foreach (var todo in Model)
+                {
+                    <tr>
+                        <td>@todo.Title </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", "Todo", new { id = todo.Id }) |
+                            @Html.ActionLink("Edit", "Edit", "Todo", new { id = todo.Id }) |
+                            @Html.ActionLink("Delete", "Delete", "Todo", new { id = todo.Id })
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        <div>@Html.ActionLink("Create New Todo", "Create", "Todo") </div>
+    </div>
+
+    <div class="col-md-4">
+        @Component.Invoke("PriorityList", 1)
+    </div>
+</div>

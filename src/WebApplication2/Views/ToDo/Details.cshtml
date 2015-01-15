@@ -1,0 +1,39 @@
+﻿@model TodoList.Models.TodoItem
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <table>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <td>
+                    @Html.DisplayFor(model => model.Title)
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsDone)
+                </th>
+                <th>
+                    @Html.DisplayFor(model => model.IsDone)
+                </th>
+            </tr>
+
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Priority)
+                </th>
+                <th>
+                    @Html.DisplayFor(model => model.Priority)
+                </th>
+            </tr>
+
+        </table>
+    </div>
+</div>

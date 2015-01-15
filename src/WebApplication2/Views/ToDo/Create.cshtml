@@ -1,0 +1,31 @@
+﻿@model TodoList.Models.TodoItemEditModel
+    
+@{
+    ViewBag.Title = "Create a ToDo Item";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    
+    <div class="form-group">
+        @Html.LabelFor(x => x.Title)
+        @Html.EditorFor(x => x.Title)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.IsDone)
+        @Html.EditorFor(x => x.IsDone)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.Priority);
+        @Html.DropDownList("Priority", String.Empty)
+</div>
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-default" />
+    </div>
+}
