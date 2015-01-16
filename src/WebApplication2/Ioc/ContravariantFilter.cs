@@ -8,7 +8,7 @@
     public class ContravariantFilter : IHandlersFilter
     {
         public bool HasOpinionAbout(Type service)
-        {
+        { 
             if (!service.IsGenericType)
                 return false;
 

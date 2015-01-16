@@ -1,12 +1,9 @@
 ﻿
 namespace WebApplication2.Ioc
 {
-    using System;
-    using System.IO;
-    using System.Net.NetworkInformation;
-    using Castle.Windsor;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.SubSystems.Configuration;
+    using Castle.Windsor;
     using CommonServiceLocator.WindsorAdapter;
     using MediatR;
     using Microsoft.Practices.ServiceLocation;
@@ -21,7 +18,7 @@ namespace WebApplication2.Ioc
             childContainer.Kernel.AddHandlersFilter(new ContravariantFilter());
             childContainer.Register(
                 Component.For<ServiceLocatorProvider>().Instance(serviceLocatorProvider),
-                Classes.FromAssemblyContaining<IMediator>().Pick().WithServiceAllInterfaces(),
+                Component.For<IMediator>().ImplementedBy<Mediator>(),
                 Classes.FromThisAssembly()
                        .BasedOn(typeof (IRequestHandler<,>))
                        .OrBasedOn(typeof (IAsyncRequestHandler<,>))
