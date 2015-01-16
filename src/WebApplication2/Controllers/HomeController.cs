@@ -1,26 +1,31 @@
-﻿using Castle.Core.Logging;
-using Microsoft.AspNet.Mvc;
-using WebApplication2.Models;
-
+﻿
 namespace WebApplication2.Controllers
 {
+    using Castle.Core.Logging;
+    using MediatR;
+    using Microsoft.AspNet.Mvc;
+    using Models;
+    using Handlers;
+
     public class HomeController : Controller
     {
-        private readonly IMessageService _messageService;
+        private readonly IMediator _mediator;
 
-        public HomeController(IMessageService messageService)
+        public HomeController(IMediator mediator)
         {
-            _messageService = messageService;
-            Logger = NullLogger.Instance;
+            _mediator = mediator;
+            Logger    = NullLogger.Instance;
         }
 
         public ILogger Logger { get; set; }
 
         public IActionResult Index()
         {
+            var pingRespone = _mediator.Send(new Ping());
+
             return View(new HomeModel
             {
-                Message = _messageService.FormatMessage("Craig")
+                Message = "Hello " + pingRespone.Message
             });
         }
 

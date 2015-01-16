@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "webroot": "wwwroot",
   "version": "1.0.0-*",
   "dependencies": {
@@ -45,6 +46,49 @@
   "scripts": {
     /*"postrestore": [
       "npm install"
+=======
+    /* Click to learn more about project.json  http://go.microsoft.com/fwlink/?LinkID=517074 */
+    "webroot": "wwwroot",
+    "version": "1.0.0-*",
+    "dependencies": {
+        "EntityFramework.SqlServer": "7.0.0-beta1",
+        "EntityFramework.Commands": "7.0.0-beta1",
+        "Microsoft.AspNet.Mvc": "6.0.0-beta1",
+        //"Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-beta1",
+        "Microsoft.AspNet.Diagnostics": "1.0.0-beta1",
+        "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-beta1",
+        "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-beta1",
+        "Microsoft.AspNet.Security.Cookies": "1.0.0-beta1",
+        "Microsoft.AspNet.Server.IIS": "1.0.0-beta1",
+        "Microsoft.AspNet.Server.WebListener": "1.0.0-beta1",
+        "Microsoft.AspNet.StaticFiles": "1.0.0-beta1",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta1",
+        "Microsoft.Framework.CodeGenerators.Mvc": "1.0.0-beta1",
+        "Microsoft.Framework.Logging": "1.0.0-beta1",
+        "Microsoft.Framework.Logging.Console": "1.0.0-beta1",
+        "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta1",
+        "Castle.Windsor": "3.3.0.0",
+"Castle.Core-Serilog": "3.3.3",
+"Castle.LoggingFacility": "3.3.0",
+"MediatR": "1.0.0.0",
+"CommonServiceLocator.WindsorAdapter": "1.0"
+
+
+    },
+    "commands": {
+        /* Change the port number when you are self hosting this application */
+        "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --server.urls http://localhost:5000",
+        "gen": "Microsoft.Framework.CodeGeneration",
+        "ef": "EntityFramework.Commands"
+    },
+    "frameworks": {
+        "aspnet50": { }
+    },
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components"
+>>>>>>> Cleanup windsor registration
     ],
     "prepare": [
       "grunt bower:install"

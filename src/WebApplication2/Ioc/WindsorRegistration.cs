@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Lifestyle;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
-using Castle.Services.Logging.SerilogIntegration;
-using Castle.Windsor;
-using Castle.Windsor.Installer;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Framework.DependencyInjection;
-using WebApplication2.Controllers;
+﻿using WebApplication2.Controllers;
+using WebApplication2.Models;
 
 namespace WebApplication2.Ioc
 {
+    using System;
+    using System.Collections.Generic;
+    using Castle.Facilities.Logging;
+    using Castle.MicroKernel;
+    using Castle.MicroKernel.Lifestyle;
+    using Castle.MicroKernel.Registration;
+    using Castle.MicroKernel.Resolvers;
+    using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+    using Castle.Services.Logging.SerilogIntegration;
+    using Castle.Windsor;
+    using Castle.Windsor.Installer;
+    using Microsoft.AspNet.Mvc;
+    using Microsoft.AspNet.Builder;
+    using Microsoft.Framework.DependencyInjection;
+
     public static class WindsorRegistration
     {
-        /// <summary>
-        /// Registers all services with the Windsor Container and sets up the fallback provider
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="services"></param>
-        /// <param name="fallbackProvider"></param>
-        public static IServiceProvider Populate(IWindsorContainer container, IEnumerable<IServiceDescriptor> services, IServiceProvider fallbackProvider)
+        public static IApplicationBuilder UseWindsor(this IApplicationBuilder builder,
+            IEnumerable<IServiceDescriptor> services)
         {
-            var fallbackComponentLoader = new FallbackLazyComponentLoader(fallbackProvider);
+            var container               = new WindsorContainer();
+            var fallbackComponentLoader = new FallbackLazyComponentLoader(builder.ApplicationServices);
             container.Register(Component.For<ILazyComponentLoader>().Instance(fallbackComponentLoader));
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
 
@@ -39,9 +38,10 @@ namespace WebApplication2.Ioc
             foreach (var serviceDescriptor in services)
                 RegisterService(container, serviceDescriptor, String.Format("MVC_{0}", ++serviceId));
 
-            return container.Resolve<IServiceProvider>();
+            builder.ApplicationServices = container.Resolve<IServiceProvider>();
+            return builder;
         }
-
+ 
         private static void RegisterService(IWindsorContainer container, IServiceDescriptor serviceDescriptor, string name)
         {
             var service = serviceDescriptor.ServiceType;
@@ -55,11 +55,10 @@ namespace WebApplication2.Ioc
             {
                 var factory = serviceDescriptor.ImplementationFactory;
                 container.Register(Component.For(service)
-                    .UsingFactoryMethod(kernel =>
-                    {
+                    .UsingFactoryMethod(kernel => {
                         var provider = kernel.Resolve<IServiceProvider>();
                         return factory(provider);
-                    })
+                        })
                     .ConfigureLifeCycle(serviceDescriptor.Lifecycle));
             }
             else
@@ -74,7 +73,7 @@ namespace WebApplication2.Ioc
 
         private class WindsorServiceProvider : IServiceProvider
         {
-            private IKernel _kernel;
+            private readonly IKernel _kernel;
 
             public WindsorServiceProvider(IKernel kernel)
             {
@@ -104,14 +103,12 @@ namespace WebApplication2.Ioc
 
         private class WindsorServiceScope : IServiceScope
         {
-            private readonly IKernel _kernel;
             private readonly IDisposable _scope;
 
             public WindsorServiceScope(IKernel kernel)
             {
-                _kernel = kernel;
-                _scope = _kernel.BeginScope();
-                ServiceProvider = _kernel.Resolve<IServiceProvider>();
+                _scope          = kernel.BeginScope();
+                ServiceProvider = kernel.Resolve<IServiceProvider>();
             }
 
             public IServiceProvider ServiceProvider { get; }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers;
-using Microsoft.AspNet.Mvc;
-
-namespace WebApplication2.Ioc
+﻿namespace WebApplication2.Ioc
 {
+    using System;
+    using System.Collections;
+    using Castle.MicroKernel.Registration;
+    using Castle.MicroKernel.Resolvers;
+
     public class FallbackLazyComponentLoader : ILazyComponentLoader
     {
-        private IServiceProvider _fallbackProvider;
+        private readonly IServiceProvider _fallbackProvider;
 
         public FallbackLazyComponentLoader(IServiceProvider provider)
         {
@@ -18,13 +17,9 @@ namespace WebApplication2.Ioc
         public IRegistration Load(string name, Type service, IDictionary arguments)
         {
             var serviceFromFallback = _fallbackProvider.GetService(service);
-
-            if (serviceFromFallback != null)
-            {
-                return Component.For(service).Instance(serviceFromFallback);
-            }
-
-            return null;
+            return serviceFromFallback != null
+                 ? Component.For(service).Instance(serviceFromFallback)
+                 : null;
         }
     }
 }

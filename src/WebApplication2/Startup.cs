@@ -1,15 +1,10 @@
 ﻿using System;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Security.Cookies;
-using Microsoft.Data.Entity;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
@@ -56,7 +51,7 @@ namespace WebApplication2
                 // You need to add Microsoft.AspNet.Mvc.WebApiCompatShim package to project.json
                 // services.AddWebApiConventions();
 
-                ConfigureWindsor(app, services);
+                app.UseWindsor(services);
             });
 
             // Configure the HTTP request pipeline.
@@ -94,15 +89,6 @@ namespace WebApplication2
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
-        }
-
-        private static void ConfigureWindsor(IApplicationBuilder app, ServiceCollection services)
-        {
-            var container = new WindsorContainer();
-            app.ApplicationServices = WindsorRegistration.Populate(container, services, app.ApplicationServices);
-            container.Register(
-                    Component.For<IMessageService>().ImplementedBy<HelloService>()
-                );
         }
     }
 }
