@@ -1,7 +1,4 @@
-﻿using WebApplication2.Controllers;
-using WebApplication2.Models;
-
-namespace WebApplication2.Ioc
+﻿namespace WebApplication2.Ioc
 {
     using System;
     using System.Collections.Generic;
@@ -20,7 +17,7 @@ namespace WebApplication2.Ioc
 
     public static class WindsorRegistration
     {
-        public static IApplicationBuilder UseWindsor(this IApplicationBuilder builder,
+        public static IServiceProvider UseWindsor(this IApplicationBuilder builder,
             IEnumerable<IServiceDescriptor> services)
         {
             var container               = new WindsorContainer();
@@ -36,10 +33,9 @@ namespace WebApplication2.Ioc
 
             var serviceId = 1;
             foreach (var serviceDescriptor in services)
-                RegisterService(container, serviceDescriptor, String.Format("MVC_{0}", ++serviceId));
+                RegisterService(container, serviceDescriptor, String.Format("_SVC_{0}", ++serviceId));
 
-            builder.ApplicationServices = container.Resolve<IServiceProvider>();
-            return builder;
+            return container.Resolve<IServiceProvider>();
         }
  
         private static void RegisterService(IWindsorContainer container, IServiceDescriptor serviceDescriptor, string name)

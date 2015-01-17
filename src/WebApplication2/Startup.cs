@@ -51,7 +51,7 @@ namespace WebApplication2
                 // You need to add Microsoft.AspNet.Mvc.WebApiCompatShim package to project.json
                 // services.AddWebApiConventions();
 
-                app.UseWindsor(services);
+                return app.UseWindsor(services);
             });
 
             // Configure the HTTP request pipeline.

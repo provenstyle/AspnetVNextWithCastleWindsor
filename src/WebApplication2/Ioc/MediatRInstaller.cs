@@ -20,8 +20,9 @@ namespace WebApplication2.Ioc
             var childContainer         = new WindsorContainer();
             var serviceLocator         = new WindsorServiceLocator(childContainer);
             var serviceLocatorProvider = new ServiceLocatorProvider(() => serviceLocator);
-            childContainer.Kernel.AddHandlersFilter(new ContravariantFilter());
+  
             childContainer.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel, true));
+            childContainer.Kernel.AddHandlersFilter(new ContravariantFilter());
 
             childContainer.Register(
                 Component.For<ServiceLocatorProvider>().Instance(serviceLocatorProvider),
